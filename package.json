@@ -1,0 +1,26 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "A CMS system for tracking employees",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/monacoglynn/Employee-Tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/monacoglynn/Employee-Tracker/issues"
+  },
+  "homepage": "https://github.com/monacoglynn/Employee-Tracker#readme",
+  "dependencies": {
+    "inquirer": "^8.2.4",
+    "mysql2": "^2.3.3",
+    "nodemon": "^2.0.16"
+  }
+}
