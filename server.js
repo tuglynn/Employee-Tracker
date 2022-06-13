@@ -1,17 +1,14 @@
-const express = require('express');
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const questions = require('./lib/questions');
 
-const PORT = process.env.PORT || 3001;
-const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({
-    extended: false
-}));
+
+
 
 const db = mysql.createConnection({
         host: 'localhost',
+        port: 3001,
         user: 'root',
         password: 'rootroot',
         database: 'employees_db'
@@ -20,7 +17,13 @@ const db = mysql.createConnection({
 );
 
 
+inquirer.prompt([questions]).then((answers) => {
+    console.log(answers)
+}).catch(err);
 
+// const splashPage = inquirer.prompt([questions]).then((answers) => {
+//     console.log(answers)
+// }).catch(err);
 
-
-app.listen(PORT, () => console.log(`running server on port ${PORT}`));
+// splashPage();
+//inquirer-table-prompt
