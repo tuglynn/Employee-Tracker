@@ -48,13 +48,19 @@ const viewDeparts = () => {
         init();
     })
 }
-const addRole = async () => {
-    let departList = [];
+const addRole = () => {
+    let departChoice = [];
     db.query(q.departList, (err, result) => {
         if (err) console.log(err);
-        for (let choice of result) departList.push(choice);
+        for (let choice of result) departChoice.push(choice);
     })
-    let newRole = await inquirer.prompt([{
+    let departList = [];
+    db.query('SELECT * FROM department', (err, result) => {
+        if (err) console.error(err);
+        departList = result
+    });
+
+    inquirer.prompt([{
             type: 'input',
             name: 'roleName',
             message: 'What is the name of the role?'
@@ -68,24 +74,32 @@ const addRole = async () => {
             type: 'list',
             name: 'depart',
             message: 'What department does it belong to?',
-            choices: departList
+            choices: departChoice
         }
-    ]);
-    db.query(q.addRole, [newRole.roleName, newRole.salary, 3], (err, result) => {
-        if (err) console.log(err);
-        console.log(`added${newRole.roleName} to roles`);
-        init();
+    ]).then((data) => {
+        newDepart = departList.filter(depart => depart.name == data.depart);
+        db.query(q.addRole, [data.roleName, data.salary, newDepart[0].id], (err, result) => {
+            if (err) console.log(err);
+            console.log(`added${data.roleName} to roles`);
+            init();
+        })
     })
-}
+};
 
 const addEmployee = () => {
-    let roleList = [];
+    let roleChoice = [];
     db.query(q.rolesList, (err, result) => {
-        if (err) console.log(err);
+        if (err) console.error(err);
         for (let choice of result) {
-            roleList.push(choice.title);
-        }
+            roleChoice.push(choice.title);
+        };
     });
+    let roleList = [];
+    db.query('SELECT * FROM role;', (err, result) => {
+        if (err) console.error(err);
+        roleList = result;
+    });
+
     inquirer.prompt([{
             type: 'input',
             name: 'first_name',
@@ -100,10 +114,11 @@ const addEmployee = () => {
             type: 'list',
             name: 'role',
             message: 'What is their position?',
-            choices: roleList
+            choices: roleChoice
         }
     ]).then((data) => {
-        db.query(q.addEmployee, [data.first_name, data.last_name, data.role], (err, result) => {
+        let newRole = roleList.filter(role => role.title == data.role);
+        db.query(q.addEmployee, [data.first_name, data.last_name, newRole[0].id], (err, result) => {
             if (err) console.error(err);
             console.log(`added ${data.first_name} ${data.last_name} to employees`);
             init();
