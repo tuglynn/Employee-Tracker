@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const questions = require('./lib/questions');
+const initQs = require('./lib/questions');
+const q = require('./lib/query');
 
 
 
@@ -21,18 +22,36 @@ db.connect((err) => {
 })
 
 const viewEmployees = () => {
-    db.query('SELECT * FROM employee', (err, result) => {
+    //id, first, last, title(role), department, salary, manager
+    db.query(q.viewEmployees, (err, result) => {
         if (err) console.error(err);
-        let employees = [];
-        result.forEach(employee => employees.push(employee));
-        console.table(employees);
+        console.table(result);
         init();
     })
 };
 
+const viewRoles = () => {
+    //id of role, title of role, the department of the role, and the salary.
+    db.query(q.viewRoles, (err, result) => {
+        if (err) console.error(err);
+        console.table(result);
+        init();
+    })
+};
+
+const viewDeparts = () => {
+    //id and name
+    db.query('SELECT * FROM department', (err, result) => {
+        if (err) console.error(err);
+        console.table(result);
+        init();
+    })
+}
+
 const init = async () => {
+    console.log('\n----------E-m-p-l-o-y-e-e----T-r-a-c-k-e-r----------\n');
     //this allows us to save the users pick from the main menu.
-    let userChoice = await inquirer.prompt(questions); //questions is the array for the main screen
+    let userChoice = await inquirer.prompt(initQs); //questions is the array for the main screen
 
     switch (userChoice.userPick) {
         case 'view all employees':
@@ -60,8 +79,6 @@ const init = async () => {
         case 'quit':
             break;
     }
-    //userChoice.userPick is the value that we will use 
-    console.log(userChoice.userPick);
 };
 
 
