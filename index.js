@@ -2,6 +2,7 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const initQs = require('./lib/questions');
 const q = require('./lib/query');
+require('console.table');
 
 
 //this allows me to connect to the sql database
@@ -140,6 +141,41 @@ const addDepart = () => {
     })
 }
 
+const updateRole = () => {
+    let roleList = [];
+    db.query('SELECT * FROM role;', (err, result) => {
+        if (err) console.error(err);
+        roleList = result;
+    });
+    let employeeArray = [];
+    db.query(q.getNames, (err, result) => {
+        if (err) console.error(err);
+        //get first name and last name and join them together
+        for (let person of result) {
+            let fullName = `${person.first} ${person.last}`;
+            employeeArray.push(fullName);
+        };
+        inquirer.prompt([{
+            type: 'list',
+            message: 'Which employee\'s role do you want to update?',
+            name: 'employee',
+            choices: employeeArray
+        }, {
+            type: 'list',
+            name: 'newRole',
+            message: 'what is the new role?',
+            choices: roleList
+        }]).then((data) => {
+            //find id and match with name.
+            //update table where it matches employee id.
+            console.log(employeeArray, '222222222');
+            db.query(q.updateRole, (err, result) => {
+                console.log(result);
+            });
+        })
+    });
+}
+
 const init = async () => {
     console.log('\n----------E-m-p-l-o-y-e-e----T-r-a-c-k-e-r----------\n');
     //this allows us to save the users pick from the main menu.
@@ -147,7 +183,6 @@ const init = async () => {
 
     switch (userChoice.userPick) {
         case 'view all employees':
-            console.log('employeeeees');
             viewEmployees();
             break;
         case 'add an employee':
